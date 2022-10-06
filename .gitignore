@@ -1,4 +1,4 @@
 .DS_Store
-./src/.vscode
-./src/.DS_Store
-./src/CS409TestSystem2022
+src/.vscode
+src/.DS_Store
+src/CS409TestSystem2022
