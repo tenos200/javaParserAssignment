@@ -1,7 +1,0 @@
-{
-    "java.project.referencedLibraries": [
-        "lib/**/*.jar",
-        "/Users/timenos/Documents/junit-platform-console-standalone-1.7.0-M1.jar",
-        "/Users/timenos/Downloads/javaparser-core-3.24.4.jar"
-    ]
-}
