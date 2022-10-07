@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class WMCMetric implements Metric{
+public class WMCMetric implements Metric {
     static int methodCounter = 0;
     static String className;
 
