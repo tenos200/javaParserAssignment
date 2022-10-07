@@ -19,35 +19,36 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class WMCMetric implements Metric{
-    static int methodCounter;
-    static Map<String, Integer> hmap = new LinkedHashMap<>();
+    static int methodCounter = 0;
+    static String className;
 
     @Override
-    public void calculateMetric() {
-        DirectoryReader reader = new DirectoryReader();
-        for(File files: reader.getFiles()) {
+    public void calculateMetric(File file) {
+            methodCounter = 0;
             try {
                 CompilationUnit cu;
-                FileInputStream in = new FileInputStream(files);
+                FileInputStream in = new FileInputStream(file);
                 cu = StaticJavaParser.parse(in);
                 new MethodCountVisitor().visit(cu, null);
-                methodCounter = 0;
 
             } catch(FileNotFoundException e) {
                 System.err.println(e);
             }
         }
+
+    public int getCount() {
+        return methodCounter;
+    }
+    public String getClassName() {
+        return className;
     }
 
-    public Map<String, Integer> getCount()  {
-        return hmap;
-    }
 
     public static class MethodCountVisitor extends VoidVisitorAdapter {
         @Override
         public void visit(ClassOrInterfaceDeclaration cl, Object arg) {
+            className = cl.getNameAsString();
             super.visit(cl, arg);
-            hmap.put(cl.getNameAsString(), methodCounter);
         }
 
         @Override

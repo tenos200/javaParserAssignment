@@ -11,29 +11,9 @@ public class DirectoryReader {
         File dir1 = new File("./CS409TestSystem2022/foxes-and-rabbits-graph");
         File dir2 = new File("./CS409TestSystem2022/taxi-company-later-stage");
         File dir3 = new File("./CS409TestSystem2022/weblog-analyzer");
-
-
-
-        File [] subDirs = dir1.listFiles();
-        for(File sub : subDirs) {
-            if(sub.getName().endsWith(".java")) {
-                list.add(sub);
-            }
-        }
-            
-        subDirs = dir2.listFiles();
-        for(File sub : subDirs) {
-            if(sub.getName().endsWith(".java")) {
-                list.add(sub);
-            }
-        }
-        
-        subDirs = dir3.listFiles();
-        for(File sub : subDirs) {
-            if(sub.getName().endsWith(".java")) {
-                list.add(sub);
-            }
-        }
+        list.add(dir1);
+        list.add(dir2);
+        list.add(dir3);
         return list;
     }
 } 

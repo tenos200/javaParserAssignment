@@ -26,19 +26,16 @@ public class WMCMetricComplex implements Metric {
     static Map<String, Integer> hmap = new HashMap<>();
 
     @Override
-    public void calculateMetric() {
-        DirectoryReader reader = new DirectoryReader();
-        for(File files: reader.getFiles()) {
-            try {
-                CompilationUnit cu;
-                FileInputStream in = new FileInputStream(files);
-                cu = StaticJavaParser.parse(in);
-                new CCM().visit(cu, null);
-                cyclomaticMetric = 0;
+    public void calculateMetric(File file) {
+        try {
+            CompilationUnit cu;
+            FileInputStream in = new FileInputStream(file);
+            cu = StaticJavaParser.parse(in);
+            new CCM().visit(cu, null);
+            cyclomaticMetric = 0;
 
-            } catch(FileNotFoundException e) {
-                System.err.println(e);
-            }
+        } catch(FileNotFoundException e) {
+            System.err.println(e);
         }
     }
 
@@ -53,27 +50,23 @@ public class WMCMetricComplex implements Metric {
             md.getBody().ifPresent(l -> l.accept(new BlockVisitor(), arg));
         }
 
-        /* 
-        @Override
-        public void visit(MethodDeclaration md, Object arg) {
-            md.accept(this, arg);
-        }*/
-
         public static class BlockVisitor extends VoidVisitorAdapter {
             @Override
             public void visit(BlockStmt stmt, Object arg) {
                 for(Statement statement : stmt.getStatements()) {
                     if(statement.isIfStmt() || statement.isSwitchStmt()) {
                         cyclomaticMetric++;
-                        statement.accept(this, null);
+                        statement.accept(new BinaryExprVisitor(), null);
                     }
                 }
             }
+        }
+        private static class BinaryExprVisitor extends VoidVisitorAdapter {
             @Override
             public void visit(BinaryExpr expr, Object arg) {
                 if(expr.getOperator() == BinaryExpr.Operator.AND) {
-
-                };
+                    //insert some code here ya phoneys
+                }
             }
         }
     }
