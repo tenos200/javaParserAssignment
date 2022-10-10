@@ -50,7 +50,7 @@ public class RFCMetric implements Metric {
 
         @Override
         public void visit(ConstructorDeclaration cd, Object arg) {
-            cd.accept(new MethodCallVisitor(), null);
+            cd.accept(new MethodCallVisitor(), arg);
         }
 
         @Override
@@ -66,13 +66,13 @@ public class RFCMetric implements Metric {
 
     public static class MethodCallVisitor extends VoidVisitorAdapter {
         @Override
-        public void visit(MethodCallExpr md, Object arg) {
-            if(!hashset.contains(md.getNameAsString())) {
-                System.out.println(md.getNameAsString());
-                hashset.add(md.getNameAsString());
+        public void visit(MethodCallExpr mdExpr, Object arg) {
+            if(!hashset.contains(mdExpr.getNameAsString())) {
+                System.out.println(mdExpr.getNameAsString());
+                hashset.add(mdExpr.getNameAsString());
                 rfcCounter++;
             }
-            super.visit(md, arg);
+            super.visit(mdExpr, arg);
         }
     }
 }
