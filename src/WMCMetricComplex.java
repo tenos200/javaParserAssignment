@@ -42,6 +42,7 @@ public class WMCMetricComplex implements Metric {
 
         @Override
         public void visit(ConstructorDeclaration md, Object arg) {
+            System.out.println(md.getDeclarationAsString());
             //We use this to ensure that we don't count the if statements in the constructors
         }
 
