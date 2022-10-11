@@ -15,11 +15,8 @@ public class Runner {
                     //System.out.format("The class: %s has %d methods\n", fl.getName().replace(".java", ""), m.getCount());
                     //ccm.calculateMetric(fl);
                     //System.out.format("The class: %s has a ccm of %d\n", fl.getName().replace(".java", ""), ccm.getCCM());
-                    rfc.calculateMetric(fl);
+                    //rfc.calculateMetric(fl);
                     System.out.format("The class: %s has a rfc of %d\n", fl.getName().replace(".java", ""), rfc.getRFC());
-                }
-                if(fl.getName().equals("Rabbit.java")) {
-                    System.exit(1);
                 }
             }
         }

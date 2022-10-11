@@ -49,11 +49,6 @@ public class RFCMetric implements Metric {
         }
 
         @Override
-        public void visit(ConstructorDeclaration cd, Object arg) {
-            cd.accept(new MethodCallVisitor(), arg);
-        }
-
-        @Override
         public void visit(MethodDeclaration md, Object arg) {
             if(!hashset.contains(md.getNameAsString())) {
                 hashset.add(md.getNameAsString());
