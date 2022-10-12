@@ -14,55 +14,50 @@ import com.github.javaparser.ast.expr.BinaryExpr;
 import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.github.javaparser.ast.stmt.BlockStmt;
 import com.github.javaparser.ast.stmt.Statement;
+import com.github.javaparser.ast.ImportDeclaration;
 import com.github.javaparser.ast.stmt.ForStmt;
 import com.github.javaparser.ast.stmt.IfStmt;
 import com.github.javaparser.ast.stmt.WhileStmt;
+import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
+import java.util.HashSet;
 
-public class RFCMetric implements Metric {
-    static int rfcCounter;
-    static Set <String> hashset = new HashSet<>();
+
+public class CBOMetric implements Metric {
+
+    static Set<String> set = new HashSet<>();
+    static Set<String> classesInDir = new HashSet<>();
+    static int counter = 0;
 
     public void calculateMetric(File file) {
-        rfcCounter = 0;
-        hashset.clear();
+
         try {
+            /* We add the files that are in each directory because these are the classes that can be coupled with our class.
+            /we don't need to count library classes, 
+            so essentially our only intrest will be the classes with the correlating names to the one in the directory
+            */
+
+            for(File fl : file.listFiles()) {
+                if(fl.getName().endsWith(".java")) {
+                    classesInDir.add(fl.getName().replace(".java", ""));
+                }
+            }
+
+            System.out.println(classesInDir.size());
+            System.exit(1);
             CompilationUnit cu;
             FileInputStream in = new FileInputStream(file);
             cu = StaticJavaParser.parse(in);
-            new MethodCountVisitor().visit(cu, null);
+            new FieldVisitor().visit(cu, null);
 
         } catch(FileNotFoundException e) {
             System.err.println(e);
         }
     }
 
-    public int getRFC() {
-        return rfcCounter;
-    }
-
-    public static class MethodCountVisitor extends VoidVisitorAdapter {
-
+    public static class FieldVisitor extends VoidVisitorAdapter {
         @Override
-        public void visit(MethodDeclaration md, Object arg) {
-            if(!hashset.contains(md.getNameAsString())) {
-                hashset.add(md.getNameAsString());
-                System.out.println(md.getNameAsString());
-                rfcCounter++;
-            }
-            md.accept(new MethodCallVisitor(), arg);
-        }
-    }
-
-    public static class MethodCallVisitor extends VoidVisitorAdapter {
-        @Override
-        public void visit(MethodCallExpr mdExpr, Object arg) {
-            if(!hashset.contains(mdExpr.getNameAsString())) {
-                hashset.add(mdExpr.getNameAsString());
-                System.out.println(mdExpr.getNameAsString());
-                rfcCounter++;
-            }
-            super.visit(mdExpr, arg);
+        public void visit(FieldDeclaration fd, Object arg) {
         }
     }
 }
