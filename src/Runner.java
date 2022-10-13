@@ -21,18 +21,9 @@ public class Runner {
                     //rfc.calculateMetric(fl);
                     //System.out.format("The class: %s has a rfc of %d\n", fl.getName().replace(".java", ""), rfc.getRFC());
                     cbo.calculateMetric(fl);
-                }
-                if(fl.getName().equals("Rabbit.java")) {
-                    System.exit(0);
+                    System.out.format("The class: %s has a cbo of %d\n", fl.getName().replace(".java", ""), cbo.getCBO(fl.getName().replace(".java", "")));
                 }
             }
         }
-
-        /* 
-        for(File file : reader.getFiles()) {
-            for(File fl : file.listFiles()) {
-
-            }
-        }*/
     }
 }

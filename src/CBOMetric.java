@@ -30,15 +30,16 @@ import java.util.HashMap;
 public class CBOMetric implements Metric {
 
     static ArrayList<ClassOrInterfaceDeclaration> listOfClasses= new ArrayList<>();
-    static Set<String> classesInDir = new HashSet<>();
-    static Set<String> declarationsFound = new HashSet<>();
-    static HashSet<String> visitedClasses = new HashSet<>();
-    static int counter = 0;
+    Set<String> classesInDir = new HashSet<>();
+    HashSet<String> visitedClasses = new HashSet<>();
+    HashMap<String, HashSet<String>> coupledClasses = new HashMap<>();
 
 
 
     public void calculateMetric(File file) {
 
+        listOfClasses.clear();
+        coupledClasses.clear();
         try {
             /* We add the files that are in each directory because these are the classes that can be coupled with our class.
             we don't need to count library classes, 
@@ -58,44 +59,55 @@ public class CBOMetric implements Metric {
                 }
             }
 
-            HashMap<String, HashSet<String>> coupledClasses = new HashMap<>();
 
             for(ClassOrInterfaceDeclaration classes : listOfClasses) {
                 //new ClassVisitor().visit(classes, null);
                 visitedClasses.add(classes.getNameAsString());
-                coupledClasses.put(classes.getNameAsString(), new HashSet<>());
                 //System.out.println(declarationsFound);
             }
             
+            CompilationUnit cu;
+            FileInputStream in = new FileInputStream(file);
+            cu = StaticJavaParser.parse(in);
+            ClassVisitor visitor = new ClassVisitor();
+            visitor.visit(cu, null);
+            HashSet<String> foundClasses = visitor.getVisited();
+            String filename = file.getName().replace(".java", "");
+            coupledClasses.put(filename, new HashSet<>());
+            foundClasses.retainAll(visitedClasses);
+            HashSet <String> setCoupled = coupledClasses.get(filename);
 
-            for(ClassOrInterfaceDeclaration classes : listOfClasses) {
-                declarationsFound.clear();
-                HashSet<String> foundClasses = visitedClasses;
-                new ClassVisitor().visit(classes, null);
-                foundClasses.retainAll(declarationsFound);
-                HashSet <String> setCoupled = coupledClasses.get(classes.getNameAsString());
-                setCoupled = foundClasses; 
-                for(ClassOrInterfaceDeclaration c1: listOfClasses) {
-                    declarationsFound.clear();
-                    if(!c1.getNameAsString().equals(classes.getNameAsString())) {
-                        System.out.println(c1.getNameAsString());
-                        System.exit(1);
-                        new ClassVisitor().visit(c1, null);
-                        if(declarationsFound.contains(classes.getNameAsString())) {
-                            HashSet<String> temp = coupledClasses.get(classes.getNameAsString());
-                            temp.add(c1.getNameAsString());
-                            coupledClasses.put(classes.getNameAsString(), temp);
-                        }
+            for(ClassOrInterfaceDeclaration c1: listOfClasses) {
+                if(!c1.getNameAsString().equals(filename) && !setCoupled.contains(c1.getNameAsString())) {
+                    ClassVisitor newVisit = new ClassVisitor();
+                    newVisit.visit(c1, null);
+                    HashSet<String> declarationsFound = newVisit.getVisited();
+                    if(declarationsFound.contains(filename)) {
+                        HashSet<String> temp = coupledClasses.get(filename);
+                        temp.add(c1.getNameAsString());
+                        coupledClasses.put(filename, temp);
                     }
-
                 }
-                System.exit(1);
             }
+            
+            HashSet<String> temp = coupledClasses.get(filename);
 
+            for(String s : foundClasses) {
+                if(!s.contains(filename)) {
+                    temp.add(s);
+                    coupledClasses.put(filename, temp);
+                }
+            }
+            System.out.println(coupledClasses);
 
         } catch(FileNotFoundException e) {
             System.err.println(e);
         }
+    }
+    public int getCBO(String filename) {
+        HashSet<String> metric = coupledClasses.get(filename);
+        coupledClasses.clear();
+        return metric.size();
     }
 
     public static class ClassVisitorCount extends VoidVisitorAdapter {
@@ -107,13 +119,20 @@ public class CBOMetric implements Metric {
     }
 
     public static class ClassVisitor extends VoidVisitorAdapter {
+        HashSet<String> visited = new HashSet<>();
         @Override
         public void visit(FieldDeclaration fd, Object arg) {
-            declarationsFound.add(fd.getElementType().asString());
+            visited.add(fd.getElementType().asString());
         }
         @Override
         public void visit(VariableDeclarator v, Object arg) {
-            declarationsFound.add(v.getTypeAsString());
+            visited.add(v.getTypeAsString());
+        }
+
+        public HashSet<String> getVisited() {
+            return visited; 
         }
     }
+
+
 }
