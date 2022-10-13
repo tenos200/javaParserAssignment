@@ -20,6 +20,7 @@ import com.github.javaparser.ast.stmt.WhileStmt;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 
 public class RFCMetric implements Metric {
+    //We assume that we don't count field variables
     static int rfcCounter;
     static Set <String> hashset = new HashSet<>();
 

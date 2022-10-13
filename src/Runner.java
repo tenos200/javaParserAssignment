@@ -11,7 +11,6 @@ public class Runner {
         CBOMetric cbo = new CBOMetric();
         
         for(File file : reader.getFiles()) {
-            cbo.calculateMetric(file);
             for(File fl : file.listFiles()) {
                 if(fl.getName().endsWith((".java"))) {
                     //cbo.calculateMetric(fl);
@@ -21,6 +20,7 @@ public class Runner {
                     //System.out.format("The class: %s has a ccm of %d\n", fl.getName().replace(".java", ""), ccm.getCCM());
                     //rfc.calculateMetric(fl);
                     //System.out.format("The class: %s has a rfc of %d\n", fl.getName().replace(".java", ""), rfc.getRFC());
+                    cbo.calculateMetric(fl);
                 }
                 if(fl.getName().equals("Rabbit.java")) {
                     System.exit(0);
