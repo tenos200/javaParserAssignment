@@ -12,7 +12,7 @@ public class Runner {
         
         for(File file : reader.getFiles()) {
             for(File fl : file.listFiles()) {
-                if(fl.getName().endsWith((".java"))) {
+                if(fl.getName().equals(("Test.java"))) {
                     //cbo.calculateMetric(fl);
                     //m.calculateMetric(fl);
                     //System.out.format("The class: %s has %d methods\n", fl.getName().replace(".java", ""), m.getCount());
@@ -22,6 +22,7 @@ public class Runner {
                     //System.out.format("The class: %s has a rfc of %d\n", fl.getName().replace(".java", ""), rfc.getRFC());
                     cbo.calculateMetric(fl);
                     System.out.format("The class: %s has a cbo of %d\n", fl.getName().replace(".java", ""), cbo.getCBO(fl.getName().replace(".java", "")));
+                    System.exit(1);
                 }
             }
         }

@@ -10,6 +10,7 @@ import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.ConstructorDeclaration;
 import com.github.javaparser.ast.body.FieldDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
+import com.github.javaparser.ast.body.Parameter;
 import com.github.javaparser.ast.body.VariableDeclarator;
 import com.github.javaparser.ast.expr.BinaryExpr;
 import com.github.javaparser.ast.expr.FieldAccessExpr;
@@ -34,8 +35,6 @@ public class CBOMetric implements Metric {
     HashSet<String> visitedClasses = new HashSet<>();
     HashMap<String, HashSet<String>> coupledClasses = new HashMap<>();
 
-
-
     public void calculateMetric(File file) {
 
         listOfClasses.clear();
@@ -59,7 +58,6 @@ public class CBOMetric implements Metric {
                 }
             }
 
-
             for(ClassOrInterfaceDeclaration classes : listOfClasses) {
                 //new ClassVisitor().visit(classes, null);
                 visitedClasses.add(classes.getNameAsString());
@@ -72,6 +70,8 @@ public class CBOMetric implements Metric {
             ClassVisitor visitor = new ClassVisitor();
             visitor.visit(cu, null);
             HashSet<String> foundClasses = visitor.getVisited();
+            System.out.println(foundClasses);
+            System.exit(1);
             String filename = file.getName().replace(".java", "");
             coupledClasses.put(filename, new HashSet<>());
             foundClasses.retainAll(visitedClasses);
@@ -110,6 +110,7 @@ public class CBOMetric implements Metric {
         return metric.size();
     }
 
+    //Visitor that is used for counting the classes in the directory
     public static class ClassVisitorCount extends VoidVisitorAdapter {
         @Override
         public void visit(ClassOrInterfaceDeclaration cl, Object arg) {
@@ -118,12 +119,37 @@ public class CBOMetric implements Metric {
         }
     }
 
+    //Visitor used for visiting all the declarations 
     public static class ClassVisitor extends VoidVisitorAdapter {
         HashSet<String> visited = new HashSet<>();
+
+        @Override
+        public void visit(ConstructorDeclaration cd, Object arg) {
+            for(Parameter p : cd.getParameters()) {
+                System.out.println(p.getType());
+                for(ClassOrInterfaceDeclaration classes : listOfClasses) {
+                    if(classes.getNameAsString().equals(p.getTypeAsString())) {
+                        visited.add(p.getTypeAsString());
+                    }
+                }
+            }
+        }
+        @Override
+        public void visit(MethodDeclaration md, Object arg) {
+            for(Parameter p : md.getParameters()) {
+                for(ClassOrInterfaceDeclaration classes : listOfClasses) {
+                    if(classes.getNameAsString().equals(p.getTypeAsString())) {
+                        visited.add(p.getTypeAsString());
+                    }
+                }
+            }
+            super.visit(md, arg);
+        }
         @Override
         public void visit(FieldDeclaration fd, Object arg) {
             visited.add(fd.getElementType().asString());
         }
+
         @Override
         public void visit(VariableDeclarator v, Object arg) {
             visited.add(v.getTypeAsString());
@@ -133,6 +159,4 @@ public class CBOMetric implements Metric {
             return visited; 
         }
     }
-
-
 }
