@@ -12,7 +12,7 @@ public class Runner {
         
         for(File file : reader.getFiles()) {
             for(File fl : file.listFiles()) {
-                if(fl.getName().equals(("Test.java"))) {
+                if(fl.getName().endsWith((".java"))) {
                     //cbo.calculateMetric(fl);
                     //m.calculateMetric(fl);
                     //System.out.format("The class: %s has %d methods\n", fl.getName().replace(".java", ""), m.getCount());
