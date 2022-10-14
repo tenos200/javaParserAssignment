@@ -48,7 +48,6 @@ public class RFCMetric implements Metric {
         public void visit(MethodDeclaration md, Object arg) {
             if(!hashset.contains(md.getNameAsString())) {
                 hashset.add(md.getNameAsString());
-                System.out.println(md.getNameAsString());
                 rfcCounter++;
             }
             md.accept(new MethodCallVisitor(), arg);
@@ -60,7 +59,6 @@ public class RFCMetric implements Metric {
         public void visit(MethodCallExpr mdExpr, Object arg) {
             if(!hashset.contains(mdExpr.getNameAsString())) {
                 hashset.add(mdExpr.getNameAsString());
-                System.out.println(mdExpr.getNameAsString());
                 rfcCounter++;
             }
             super.visit(mdExpr, arg);
