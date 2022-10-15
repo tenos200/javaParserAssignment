@@ -23,6 +23,9 @@ public class CBOMetric implements Metric {
     Set<String> classesInDir = new HashSet<>();
     HashSet<String> visitedClasses = new HashSet<>();
     HashMap<String, HashSet<String>> coupledClasses = new HashMap<>();
+    /* The assumption we make here is that we do not count method calls to remote classes declared field variables
+     * e.g., private String name = someClass.getName(); <- this variable does not necessarily have to be used, hence we make this assumption.
+    */
 
     public void calculateMetric(File file) {
 

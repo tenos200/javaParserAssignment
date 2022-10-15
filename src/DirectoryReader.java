@@ -8,6 +8,7 @@ public class DirectoryReader {
 
     public ArrayList<File> getFiles() {
         ArrayList <File> list = new ArrayList<>();
+        //Change the path here, sometimes this can break the program
         File dir1 = new File("./CS409TestSystem2022/foxes-and-rabbits-graph");
         File dir2 = new File("./CS409TestSystem2022/taxi-company-later-stage");
         File dir3 = new File("./CS409TestSystem2022/weblog-analyzer");

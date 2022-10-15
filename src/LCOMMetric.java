@@ -32,12 +32,10 @@ public class LCOMMetric implements Metric {
     static String current;
     static int LCOMCount; 
     public void calculateMetric(File file) {
-
         /* 
             We assume that an instantiation of a local variable will not have the same name as an instance variable,
-            e.g., if a field variable martin has been declared at the top we assume that no locale method will declare another martin.
+            e.g., if a field variable (int martin) has been declared at the top we assume that no locale method will declare another (int martin).
         */
-
         try {
 
             //we need to null all the values before starting this on a new class
@@ -109,6 +107,10 @@ public class LCOMMetric implements Metric {
         }
     }
 
+    /*This visitor looks at all the name of what the initaliser and compares these to the field declarations.
+     *If one of the initializers is in the field declarations set then we add this into the variables name set. 
+    */
+    
     public static class NameVisitor extends VoidVisitorAdapter  {
         @Override
         public void visit(VariableDeclarator vd, Object arg) {
@@ -120,6 +122,7 @@ public class LCOMMetric implements Metric {
             }
         }
 
+        //After this we visits all the remaining simple names that is in the class
         @Override
         public void visit(SimpleName name, Object arg) {
             HashSet<String> set  = variableNamesInMethods.get(current);
