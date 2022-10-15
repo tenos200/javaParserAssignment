@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.StaticJavaParser;
@@ -13,7 +14,9 @@ import com.github.javaparser.ast.body.FieldDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.Parameter;
 import com.github.javaparser.ast.body.VariableDeclarator;
+import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.expr.SimpleName;
+import com.github.javaparser.ast.expr.VariableDeclarationExpr;
 import com.github.javaparser.ast.stmt.BlockStmt;
 import com.github.javaparser.ast.stmt.ExpressionStmt;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
@@ -29,6 +32,11 @@ public class LCOMMetric implements Metric {
     static String current;
     static int LCOMCount; 
     public void calculateMetric(File file) {
+
+        /* 
+            We assume that an instantiation of a local variable will not have the same name as an instance variable,
+            e.g., if a field variable martin has been declared at the top we assume that no locale method will declare another martin.
+        */
 
         try {
 
@@ -78,6 +86,7 @@ public class LCOMMetric implements Metric {
         return LCOMCount;
     }
 
+    //This visitor makes sure to find all the field declarations as they will the comparisons between the methods
     public static class VisitFields extends VoidVisitorAdapter {
         @Override
         public void visit(FieldDeclaration fl, Object arg) {
@@ -87,8 +96,10 @@ public class LCOMMetric implements Metric {
         }
     }
 
+    /* This visitor visits all the methods and their methods bodies, we are only intrested in the things that are not declared in 
+     * 
+    */
     public static class VisitMethodVariables extends VoidVisitorAdapter {
-
         @Override
         public void visit(MethodDeclaration md, Object arg) {
             allMethods.add(md);
@@ -101,6 +112,12 @@ public class LCOMMetric implements Metric {
     public static class NameVisitor extends VoidVisitorAdapter  {
         @Override
         public void visit(VariableDeclarator vd, Object arg) {
+            HashSet<String> set  = variableNamesInMethods.get(current);
+            Optional<Expression> initalizer = vd.getInitializer();
+            if(initalizer.isPresent() && fieldDeclarations.contains(initalizer.get().toString())) {
+                set.add(initalizer.get().toString());
+                variableNamesInMethods.put(current, set);
+            }
         }
 
         @Override
@@ -108,6 +125,7 @@ public class LCOMMetric implements Metric {
             HashSet<String> set  = variableNamesInMethods.get(current);
             if(fieldDeclarations.contains(name.getIdentifier())) {
                 set.add(name.getIdentifier());
+                variableNamesInMethods.put(current, set);
             }
         }
     }
