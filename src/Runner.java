@@ -4,9 +4,9 @@ import java.io.File;
 
 public class Runner {
     public static void main(String[] args) {
-        WMCMetric m = new WMCMetric();
-        WMCMetricComplex ccm = new WMCMetricComplex();
         DirectoryReader reader = new DirectoryReader();
+        WMCMetric wmc = new WMCMetric();
+        WMCMetricComplex ccm = new WMCMetricComplex();
         RFCMetric rfc = new RFCMetric();
         CBOMetric cbo = new CBOMetric();
         LCOMMetric lcom = new LCOMMetric();
@@ -14,9 +14,8 @@ public class Runner {
         for(File file : reader.getFiles()) {
             for(File fl : file.listFiles()) {
                 if(fl.getName().endsWith((".java"))) {
-                    //cbo.calculateMetric(fl);
-                    //m.calculateMetric(fl);
-                    //System.out.format("The class: %s has %d methods\n", fl.getName().replace(".java", ""), m.getCount());
+                    //wmc.calculateMetric(fl);
+                    //System.out.format("The class: %s has %d methods\n", fl.getName().replace(".java", ""), wmc.getCount());
                     //ccm.calculateMetric(fl);
                     //System.out.format("The class: %s has a ccm of %d\n", fl.getName().replace(".java", ""), ccm.getCCM());
                     //rfc.calculateMetric(fl);

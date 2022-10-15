@@ -25,6 +25,9 @@ public class CBOMetric implements Metric {
     HashMap<String, HashSet<String>> coupledClasses = new HashMap<>();
     /* The assumption we make here is that we do not count method calls to remote classes declared field variables
      * e.g., private String name = someClass.getName(); <- this variable does not necessarily have to be used, hence we make this assumption.
+     * Another assumption we are making is that if we instansiate something from another class that inherits a class thats already been counted we don't count this class.
+     * e.g., We have 3 classes BankAccount, KidsAccount, SaveAccount. Kids and save account extends bankaccount, if we find something like BankAccount = new KidsAccount, 
+     * and BankAccount = new SaveAccount, this would just count as 1 since both classes inherits from BankAccounts
     */
 
     public void calculateMetric(File file) {
