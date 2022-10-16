@@ -18,6 +18,11 @@ import java.io.FileNotFoundException;
 
 public class WMCMetricComplex implements Metric {
 
+    /* The assumption we make for this count of metric is that the following statements: 
+    switch, if, while, do, try, for each, for.
+    All of these have the possibility to affect the flow graph in some way, 
+    as they are able to lead to different decisions while visited
+    */
     static int cyclomaticMetric = 0;
 
     @Override
@@ -42,10 +47,15 @@ public class WMCMetricComplex implements Metric {
 
         @Override
         public void visit(ConstructorDeclaration md, Object arg) {
-            System.out.println(md.getDeclarationAsString());
             //We use this to ensure that we don't count the if statements in the constructors
         }
 
+        @Override
+        public void visit(MethodDeclaration md, Object arg) {
+            cyclomaticMetric++;
+            super.visit(md, arg);
+        }
+        
         @Override
         public void visit(BlockStmt m, Object arg) {
             for(Statement statement : m.getStatements()) {
@@ -54,12 +64,6 @@ public class WMCMetricComplex implements Metric {
                     statement.accept(this, arg);
                 }
             }
-        }
-
-        @Override
-        public void visit(MethodDeclaration md, Object arg) {
-            cyclomaticMetric++;
-            super.visit(md, arg);
         }
 
         @Override

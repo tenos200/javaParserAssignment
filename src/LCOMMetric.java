@@ -37,7 +37,6 @@ public class LCOMMetric implements Metric {
             e.g., if a field variable (int martin) has been declared at the top we assume that no locale method will declare another (int martin).
         */
         try {
-
             //we need to null all the values before starting this on a new class
             LCOMCount = 0;
             allMethods.clear();

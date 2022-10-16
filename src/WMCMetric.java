@@ -39,22 +39,11 @@ public class WMCMetric implements Metric {
     public int getCount() {
         return methodCounter;
     }
-    public String getClassName() {
-        return className;
-    }
-
 
     public static class MethodCountVisitor extends VoidVisitorAdapter {
-        @Override
-        public void visit(ClassOrInterfaceDeclaration cl, Object arg) {
-            className = cl.getNameAsString();
-            super.visit(cl, arg);
-        }
-
         @Override
         public void visit(MethodDeclaration md, Object arg) {
             methodCounter++;
         }
-
     }  
 }

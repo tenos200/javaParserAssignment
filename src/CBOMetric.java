@@ -19,9 +19,13 @@ import java.util.HashMap;
 
 public class CBOMetric implements Metric {
 
+    //list for all the classes
     static ArrayList<ClassOrInterfaceDeclaration> listOfClasses= new ArrayList<>();
+    //set to store all class name in the directory where the file resides
     Set<String> classesInDir = new HashSet<>();
+    //set to see what classes has been visited
     HashSet<String> visitedClasses = new HashSet<>();
+    //Hashmap which keeps track of what class is coupled with what classes
     HashMap<String, HashSet<String>> coupledClasses = new HashMap<>();
     /* The assumption we make here is that we do not count method calls to remote classes declared field variables
      * e.g., private String name = someClass.getName(); <- this variable does not necessarily have to be used, hence we make this assumption.
@@ -60,9 +64,11 @@ public class CBOMetric implements Metric {
             HashSet<String> foundClasses = visitor.getVisited();
             String filename = file.getName().replace(".java", "");
             coupledClasses.put(filename, new HashSet<>());
+            //gets the classes that resides in our current class
             foundClasses.retainAll(visitedClasses);
             HashSet <String> setCoupled = coupledClasses.get(filename);
 
+            //loops through the remaining classes, and if they find the current class name we add to coupling
             for(ClassOrInterfaceDeclaration c1: listOfClasses) {
                 if(!c1.getNameAsString().equals(filename) && !setCoupled.contains(c1.getNameAsString())) {
                     ClassVisitor newVisit = new ClassVisitor();
