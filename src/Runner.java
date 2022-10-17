@@ -11,11 +11,12 @@ public class Runner {
         CBOMetric cbo = new CBOMetric();
         LCOMMetric lcom = new LCOMMetric();
 
+        //make sure to uncomment whatever you want to check here.
         for(File file : reader.getFiles()) {
             for(File fl : file.listFiles()) {
                 if(fl.getName().endsWith((".java"))) {
-                    wmc.calculateMetric(fl);
-                    System.out.format("The class: %s has %d methods\n", fl.getName().replace(".java", ""), wmc.getCount());
+                    //wmc.calculateMetric(fl);
+                    //System.out.format("The class: %s has %d methods\n", fl.getName().replace(".java", ""), wmc.getCount());
                     //ccm.calculateMetric(fl);
                     //System.out.format("The class: %s has a ccm of %d\n", fl.getName().replace(".java", ""), ccm.getCCM());
                     //rfc.calculateMetric(fl);

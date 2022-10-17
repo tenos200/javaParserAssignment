@@ -8,7 +8,7 @@ public class DirectoryReader {
     public ArrayList<File> getFiles() {
         ArrayList <File> list = new ArrayList<>();
         //change the perfered path here
-        File directory = new File("./CS409TestSystem2022");
+        File directory = new File("./cs409TestSystem2022");
         for(File files : directory.listFiles()) {
             if(files.isDirectory()) {
                 list.add(files);

@@ -11,11 +11,14 @@ import com.github.javaparser.ast.body.FieldDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.Parameter;
 import com.github.javaparser.ast.body.VariableDeclarator;
+import com.github.javaparser.ast.expr.AssignExpr;
+import com.github.javaparser.ast.expr.ObjectCreationExpr;
+import com.github.javaparser.ast.expr.SimpleName;
+import com.github.javaparser.ast.stmt.ExpressionStmt;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 import java.util.HashSet;
 import java.util.ArrayList;
 import java.util.HashMap;
-
 
 public class CBOMetric implements Metric {
 
@@ -27,12 +30,6 @@ public class CBOMetric implements Metric {
     HashSet<String> visitedClasses = new HashSet<>();
     //Hashmap which keeps track of what class is coupled with what classes
     HashMap<String, HashSet<String>> coupledClasses = new HashMap<>();
-    /* The assumption we make here is that we do not count method calls to remote classes declared field variables
-     * e.g., private String name = someClass.getName(); <- this variable does not necessarily have to be used, hence we make this assumption.
-     * Another assumption we are making is that if we instansiate something from another class that inherits a class thats already been counted we don't count this class.
-     * e.g., We have 3 classes BankAccount, KidsAccount, SaveAccount. Kids and save account extends bankaccount, if we find something like BankAccount = new KidsAccount, 
-     * and BankAccount = new SaveAccount, this would just count as 1 since both classes inherits from BankAccounts
-    */
 
     public void calculateMetric(File file) {
 
@@ -97,7 +94,7 @@ public class CBOMetric implements Metric {
     }
     public int getCBO(String filename) {
         HashSet<String> metric = coupledClasses.get(filename);
-        System.out.println(coupledClasses);
+        System.out.println(metric);
         coupledClasses.clear();
         return metric.size();
     }
@@ -144,7 +141,15 @@ public class CBOMetric implements Metric {
 
         @Override
         public void visit(VariableDeclarator v, Object arg) {
+            if(v.getInitializer().isPresent()) {
+                super.visit(v, arg);
+            }
             visited.add(v.getTypeAsString());
+        }
+
+        @Override
+        public void visit(ObjectCreationExpr oExpr, Object arg) {
+            visited.add(oExpr.getTypeAsString());
         }
 
         public HashSet<String> getVisited() {
